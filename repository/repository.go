@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 	"log"
-	"mo-service-auth/mo-service-common/graph/model"
+	"mo-service-auth/mo-service-common/model"
 	"mo-service-auth/mo-service-common/util"
 	"strings"
 
