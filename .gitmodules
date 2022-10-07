@@ -1,0 +1,3 @@
+[submodule "mo-service-common"]
+	path = mo-service-common
+	url = https://github.com/joe-and-his-friends/mo-service-common.git

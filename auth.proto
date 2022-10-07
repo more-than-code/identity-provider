@@ -1,0 +1,81 @@
+syntax="proto3";
+
+package auth;
+
+option go_package = "./pb";
+
+service Auth {
+  rpc AuthenticateUser (AuthenticateUserRequest) returns (AuthenticateUserResponse) {}
+  rpc RefreshAccessToken (RefreshAccessTokenRequest) returns (RefreshAccessTokenResponse) {}
+
+  rpc AuthenticateUserFromGoogle (AuthenticateUserFromGoogleRequest) returns (AuthenticateUserFromGoogleResponse) {}
+  rpc GetGoogleUserId (GetGoogleUserIdRequest) returns (GetGoogleUserIdResponse) {}
+
+  rpc AuthenticateUserFromApple (AuthenticateUserFromAppleRequest) returns (AuthenticateUserFromAppleResponse) {}
+  rpc GetAppleUserId (GetAppleUserIdRequest) returns (GetAppleUserIdResponse) {}
+}
+
+message AuthenticateUserRequest {
+   string phone_or_email = 1;
+   string password = 2; 
+}
+
+message AuthenticateUserResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  string user_id = 3;
+  int32 err_code = 4;
+  string msg = 5;
+}
+
+message RefreshAccessTokenRequest {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+message RefreshAccessTokenResponse {
+ string access_token = 1;
+ string refresh_token = 2;
+ string user_id = 3;
+}
+
+
+message AuthenticateUserFromAppleRequest {
+  string auth_code = 1;
+}
+
+message AuthenticateUserFromAppleResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  string user_id = 3;
+  int32 err_code = 4;
+  string msg = 5;
+}
+
+message AuthenticateUserFromGoogleRequest {
+  string id_token = 1;
+}
+
+message AuthenticateUserFromGoogleResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  string user_id = 3;
+  int32 err_code = 4;
+  string msg = 5;
+}
+
+message GetGoogleUserIdRequest {
+  string id_token = 1;
+}
+
+message GetGoogleUserIdResponse {
+ string id = 1;
+}
+
+message GetAppleUserIdRequest {
+  string auth_code = 1;
+}
+
+message GetAppleUserIdResponse {
+ string id = 1;
+}
