@@ -68,11 +68,11 @@ func (r *Repository) Disconnect() {
 func (r *Repository) GetUserByPhoneOrEmail(input string) (*model.UserProfileWithPassword, error) {
 	coll := r.mongoClient.Database("mohiguide").Collection("users")
 
-	var filter bson.D
+	filter := bson.M{"$or": bson.A{bson.M{"deactivated": bson.M{"$exists": false}}, bson.M{"deactivated": false}}}
 	if util.IsEmail(input) {
-		filter = bson.D{{"email", strings.ToLower(input)}}
+		filter["email"] = strings.ToLower(input)
 	} else {
-		filter = bson.D{{"phone", input}}
+		filter["phone"] = input
 	}
 
 	user := &model.UserProfileWithPassword{}
