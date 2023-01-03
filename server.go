@@ -78,11 +78,17 @@ func (s *Server) AuthenticateUser(ctx context.Context, req *pb.AuthenticateUserR
 	user, err := s.repo.GetUserByPhoneOrEmail(req.PhoneOrEmail)
 	res := &pb.AuthenticateUserResponse{AccessToken: "", Msg: "Authenticated", ErrCode: 0}
 
-	if err != nil {
+	if user == nil {
 		fmt.Println(err)
 		res.ErrCode = global.CodeWrongEmailOrPassword
 		res.Msg = global.MsgWrongEmailOrPassword
 		return res, nil
+	} else {
+		if user.Deactivated {
+			res.ErrCode = global.CodeDeletedUser
+			res.Msg = global.MsgDeletedUser
+			return res, nil
+		}
 	}
 
 	err = util.CheckPasswordHash(req.Password, user.Password)
