@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"mo-service-auth/pb"
-	"mo-service-auth/repository"
 	"net"
+
+	"github.com/joe-and-his-friends/mo-service-auth/pb"
+	"github.com/joe-and-his-friends/mo-service-common/repository"
 
 	"github.com/joe-and-his-friends/mo-service-common/global"
 	"github.com/joe-and-his-friends/mo-service-common/model"

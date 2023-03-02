@@ -1,6 +1,6 @@
 package main
 
-import auth "mo-service-auth"
+import auth "github.com/joe-and-his-friends/mo-service-auth"
 
 func main() {
 	port := 8003
