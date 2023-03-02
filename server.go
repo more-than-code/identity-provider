@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"mo-service-auth/mo-service-common/global"
-	"mo-service-auth/mo-service-common/model"
-	"mo-service-auth/mo-service-common/util"
 	"mo-service-auth/pb"
 	"mo-service-auth/repository"
 	"net"
+
+	"github.com/joe-and-his-friends/mo-service-common/global"
+	"github.com/joe-and-his-friends/mo-service-common/model"
+	"github.com/joe-and-his-friends/mo-service-common/util"
 
 	"github.com/dgrijalva/jwt-go/v4"
 	authHelper "github.com/more-than-code/auth-helper"
