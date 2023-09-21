@@ -7,12 +7,11 @@ import (
 	"log"
 	"net"
 
-	"github.com/joe-and-his-friends/mo-service-auth/pb"
-	"github.com/joe-and-his-friends/mo-service-common/repository"
-
-	"github.com/joe-and-his-friends/mo-service-common/global"
-	"github.com/joe-and-his-friends/mo-service-common/model"
-	"github.com/joe-and-his-friends/mo-service-common/util"
+	repository "mo-service/mo-repository"
+	"mo-service/mo-types/constant"
+	"mo-service/mo-types/model"
+	"mo-service/mo-types/util"
+	"mo-service/pb"
 
 	"github.com/dgrijalva/jwt-go/v4"
 	authHelper "github.com/more-than-code/auth-helper"
@@ -77,18 +76,18 @@ func NewServer(port int) error {
 }
 
 func (s *Server) AuthenticateUser(ctx context.Context, req *pb.AuthenticateUserRequest) (*pb.AuthenticateUserResponse, error) {
-	user, err := s.repo.GetUserByPhoneOrEmail(req.PhoneOrEmail)
+	user, err := s.repo.GetUserByPhoneOrEmail(ctx, req.PhoneOrEmail)
 	res := &pb.AuthenticateUserResponse{AccessToken: "", Msg: "Authenticated", ErrCode: 0}
 
 	if user == nil {
 		fmt.Println(err)
-		res.ErrCode = global.CodeWrongEmailOrPassword
-		res.Msg = global.MsgWrongEmailOrPassword
+		res.ErrCode = constant.CodeWrongEmailOrPassword
+		res.Msg = constant.MsgWrongEmailOrPassword
 		return res, nil
 	} else {
 		if user.Deactivated {
-			res.ErrCode = global.CodeDeletedUser
-			res.Msg = global.MsgDeletedUser
+			res.ErrCode = constant.CodeDeletedUser
+			res.Msg = constant.MsgDeletedUser
 			return res, nil
 		}
 	}
@@ -96,12 +95,12 @@ func (s *Server) AuthenticateUser(ctx context.Context, req *pb.AuthenticateUserR
 	err = util.CheckPasswordHash(req.Password, user.Password)
 	if err != nil {
 		fmt.Println(err)
-		res.ErrCode = global.CodeWrongEmailOrPassword
-		res.Msg = global.MsgWrongEmailOrPassword
+		res.ErrCode = constant.CodeWrongEmailOrPassword
+		res.Msg = constant.MsgWrongEmailOrPassword
 		return res, nil
 	}
 
-	partialProfile := &model.UserProfile{Id: user.Id, Role: int(user.Role), Level: int(user.Level)}
+	partialProfile := &model.UserProfile{ID: user.ID, Role: int(user.Role), Level: int(user.Level)}
 	bytes, _ := json.Marshal(partialProfile)
 
 	at, err := s.atHelper.Authenticate(string(bytes))
@@ -114,10 +113,10 @@ func (s *Server) AuthenticateUser(ctx context.Context, req *pb.AuthenticateUserR
 	}
 	res.AccessToken = at
 
-	rt, _ := s.rtHelper.Authenticate(user.Id.Hex())
+	rt, _ := s.rtHelper.Authenticate(user.ID.Hex())
 	res.RefreshToken = rt
 
-	res.UserId = user.Id.Hex()
+	res.UserId = user.ID.Hex()
 
 	return res, nil
 }
@@ -126,13 +125,13 @@ func (s *Server) RefreshAccessToken(ctx context.Context, req *pb.RefreshAccessTo
 	userId, err := s.rtHelper.ParseTokenString(req.RefreshToken)
 
 	if err != nil {
-		return nil, status.Error(codes.Code(global.CodeAuthenticationFailure), global.MsgAuthenticationFailure)
+		return nil, status.Error(codes.Code(constant.CodeAuthenticationFailure), constant.MsgAuthenticationFailure)
 	}
 
 	// s.repo.DeleteRefreshToken(ctx, userId, req.RefreshToken)
 
 	// if err != nil {
-	// 	return nil, status.Error(codes.Code(global.CodeAuthenticationFailure), global.MsgAuthenticationFailure)
+	// 	return nil, status.Error(codes.Code(constant.CodeAuthenticationFailure), constant.MsgAuthenticationFailure)
 	// }
 
 	userProfile, err := s.atHelper.ParseTokenString(req.AccessToken)
@@ -142,20 +141,20 @@ func (s *Server) RefreshAccessToken(ctx context.Context, req *pb.RefreshAccessTo
 
 		fmt.Println(err)
 		if !ok {
-			return nil, status.Error(codes.Code(global.CodeAuthenticationFailure), global.MsgAuthenticationFailure)
+			return nil, status.Error(codes.Code(constant.CodeAuthenticationFailure), constant.MsgAuthenticationFailure)
 		}
 	}
 
 	at, err := s.atHelper.Authenticate(userProfile)
 
 	if err != nil {
-		return nil, status.Error(codes.Code(global.CodeAuthenticationFailure), global.MsgAuthenticationFailure)
+		return nil, status.Error(codes.Code(constant.CodeAuthenticationFailure), constant.MsgAuthenticationFailure)
 	}
 
 	rt, err := s.rtHelper.Authenticate(userId)
 
 	if err != nil {
-		return nil, status.Error(codes.Code(global.CodeAuthenticationFailure), global.MsgAuthenticationFailure)
+		return nil, status.Error(codes.Code(constant.CodeAuthenticationFailure), constant.MsgAuthenticationFailure)
 	}
 
 	// s.repo.UpdateRefreshToken(ctx, tr)

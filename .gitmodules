@@ -1,0 +1,6 @@
+[submodule "mo-types"]
+	path = mo-types
+	url = https://github.com/joe-and-his-friends/mo-types.git
+[submodule "mo-repository"]
+	path = mo-repository
+	url = https://github.com/joe-and-his-friends/mo-repository.git
