@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine3.16 AS build
+FROM golang:1.21-alpine AS build
 RUN apk --no-cache add gcc g++ make ca-certificates
 WORKDIR /go/src/mo-service
 
