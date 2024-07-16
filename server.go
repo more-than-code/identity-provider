@@ -30,7 +30,8 @@ type Config struct {
 	HourRt                          int    `envconfig:"RT_TTL_HOUR"`
 	DayRt                           int    `envconfig:"RT_TTL_DAY"`
 	Secret                          []byte `envconfig:"TOKEN_SECRET_KEY"`
-	credentialsVerificationEndpoint string `envconfig:"CREDENTIALS_VERIFICATION_ENDPOINT"`
+	CredentialsVerificationEndpoint string `envconfig:"CREDENTIALS_VERIFICATION_ENDPOINT"`
+	ServerPort                      string `envconfig:"SERVER_PORT"`
 }
 
 type Server struct {
@@ -51,7 +52,7 @@ type CredentialsVerificationResponse struct {
 	Payload interface{}
 }
 
-func NewServer(port int) error {
+func NewServer() error {
 	var cfg Config
 	err := envconfig.Process("", &cfg)
 
@@ -59,7 +60,7 @@ func NewServer(port int) error {
 		log.Fatal(err)
 	}
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	lis, err := net.Listen("tcp", cfg.ServerPort)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -88,7 +89,7 @@ func (s *Server) AuthenticateUser(ctx context.Context, req *pb.AuthenticateUserR
 		return nil, err
 	}
 
-	httpReq, err := http.NewRequest("POST", s.cfg.credentialsVerificationEndpoint, bytes.NewBuffer(jsonData))
+	httpReq, err := http.NewRequest("POST", s.cfg.CredentialsVerificationEndpoint, bytes.NewBuffer(jsonData))
 
 	if err != nil {
 		fmt.Println("Error creating request:", err)
