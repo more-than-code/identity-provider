@@ -1,6 +1,6 @@
 package main
 
-import auth "mo-service"
+import auth "github.com/more-than-code/identity-provider"
 
 func main() {
 	port := 8003
