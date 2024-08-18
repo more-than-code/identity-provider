@@ -117,6 +117,10 @@ func (s *Server) AuthenticateUser(ctx context.Context, req *pb.AuthenticateUserR
 
 	res := &pb.AuthenticateUserResponse{AccessToken: "", Msg: cvRes.Msg, ErrCode: cvRes.Code}
 
+	if cvRes.Code != 0 {
+		return res, nil
+	}
+
 	authStr := cvRes.Payload.(string)
 	at, err := s.atHelper.Authenticate(authStr)
 
